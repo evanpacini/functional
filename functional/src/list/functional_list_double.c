@@ -11,7 +11,7 @@ ListDouble ListDoubleX(double head, ...) {
     va_start(args, head);
     ListDouble list = (ListDouble) malloc(sizeof(ListDouble));
     list->head = head;
-    list->tail = Nil;
+    list->tail = NilDouble;
     list->size = 1 + helper_ListDoubleX(args, list);
     return list;
 }
@@ -29,7 +29,7 @@ const char *toStringListDouble(ListDouble list) {
     ListDouble head = list;
     char *str = malloc(list->size * 18 + 13);
     strcpy(str, "ListDouble(");
-    while (head != Nil) {
+    while (head != NilDouble) {
         char *str2 = malloc(19);
         sprintf(str2, "%.10e, ", head->head);
         strcat(str, str2);

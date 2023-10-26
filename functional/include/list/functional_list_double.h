@@ -5,7 +5,7 @@
 #include <types/double.h>
 #include <types/list/list_double.h>
 
-#define ListDouble(...) ListDoubleX(__VA_ARGS__, nilDouble)
+#define ListDouble(...) ListDoubleX(__VA_ARGS__, NilDouble->head)
 #define $ld(x) startPipeListDouble(x)
 /**
  *
