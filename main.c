@@ -22,7 +22,7 @@ int main() {
     float x = $f(someFloat(.5f)).pow(someFloat(.5f)).round().toInt().add(someInt(1)).toFloat() $_;
     printf("x: %f\n", x);
 
-    printf("Nil: %f 0x%016lx\n", Nil->head, *((uint64_t *) &Nil->head));
+    printf("NilDouble: %f 0x%016lx\n", NilDouble->head, *((uint64_t *) &NilDouble->head));
 
     ListDouble list = ListDouble(1.123456789e-5, 2., 3., 4.);
     printf("list: %s\n", toStringListDouble(list));
@@ -35,6 +35,6 @@ int main() {
     printf("list2 with 3 inserted: %s\n", toStringListDouble($ld(list2).insert(3.) $));
     printf("list2 after insertion in the pipe: %s\n", toStringListDouble(list2));
     printf("list and list2: %s\n", toStringListDouble($ld(list).concat(list2) $));
-    printf("Nil: %s\n", toStringListDouble(Nil));
+    printf("NilDouble: %s\n", toStringListDouble(NilDouble));
     return 0;
 }

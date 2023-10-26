@@ -16,9 +16,12 @@ struct ListDoubleStruct {
 };
 
 const uint64_t nilBits = 0x7ffadefeadedbeef;
-const double nilDouble = __builtin_nan("0xadefeadedbeef");
-ListDoubleStruct NilStruct = {.head = nilDouble, .tail = NULL, .size = 0};
-ListDouble Nil = &NilStruct;
+#ifdef __cplusplus
+extern "C"
+#else
+extern
+#endif //__cplusplus
+ListDouble NilDouble;
 
 typedef struct NextDouble NextDouble;
 
