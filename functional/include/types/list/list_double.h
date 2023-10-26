@@ -20,8 +20,8 @@ const uint64_t nilBits = 0x7ffadefeadedbeef;
 extern "C"
 #else
 extern
-#endif //__cplusplus
-ListDouble NilDouble;
+#endif//__cplusplus
+    ListDouble NilDouble;
 
 typedef struct NextDouble NextDouble;
 
