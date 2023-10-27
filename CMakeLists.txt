@@ -7,7 +7,7 @@ set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS 1)
 
 include(CheckLibraryExists)
 
-add_library(nil STATIC functional/src/list/nil.cpp)
+add_library(nil STATIC functional/src/list/helpers/nil.cpp)
 target_include_directories(nil PRIVATE functional/include)
 
 add_library(
