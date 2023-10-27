@@ -5,6 +5,7 @@ uint32_t helper_ListDoubleX(va_list args, ListDouble aboveList) {
     double arg = va_arg(args, double);
     if (*((uint64_t *) &arg) == nilBits) return 0;
     ListDouble newList = (ListDouble) malloc(sizeof(ListDouble));
+    if (newList == NULL) exit(LIST_DOUBLE_MALLOC_ERROR);
     newList->head = arg;
     newList->tail = NilDouble;
     aboveList->tail = newList;
@@ -14,7 +15,7 @@ uint32_t helper_ListDoubleX(va_list args, ListDouble aboveList) {
 }
 
 ListDouble helper_lastReference(ListDouble ld) {
-    return ld->tail == NilDouble ? ld : helper_lastReference(ld->tail);
+    return ld->tail->headBits == nilBits ? ld : helper_lastReference(ld->tail);
 }
 
 void helper_updateSize(ListDouble ld, uint32_t addedSize) {
