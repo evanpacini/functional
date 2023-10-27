@@ -1,3 +1,4 @@
+#include <error.h>
 #include <list/functional_list_double.h>
 #include <stdio.h>
 #include <string.h>
@@ -10,6 +11,7 @@ ListDouble ListDoubleX(double head, ...) {
     va_list args;
     va_start(args, head);
     ListDouble list = (ListDouble) malloc(sizeof(ListDouble));
+    if (list == NULL) exit(LIST_DOUBLE_MALLOC_ERROR);
     list->head = head;
     list->tail = NilDouble;
     list->size = 1 + helper_ListDoubleX(args, list);
@@ -28,9 +30,11 @@ ListDouble endPipeListDouble() {
 const char *toStringListDouble(ListDouble list) {
     ListDouble head = list;
     char *str = malloc(list->size * 18 + 13);
+    if (str == NULL) exit(LIST_DOUBLE_MALLOC_ERROR);
     strcpy(str, "ListDouble(");
     while (head->headBits != nilBits) {
         char *str2 = malloc(19);
+        if (str2 == NULL) exit(LIST_DOUBLE_MALLOC_ERROR);
         sprintf(str2, "%.10e, ", head->head);
         strcat(str, str2);
         free(str2);
@@ -56,6 +60,7 @@ NextDouble getValueListDouble(uint32_t i) {
 
 NextListDouble insertListDouble(double head) {
     ListDouble newList = malloc(sizeof(ListDouble));
+    if (newList == NULL) exit(LIST_DOUBLE_MALLOC_ERROR);
     newList->head = head;
     newList->tail = pipeListDouble;
     pipeListDouble = newList;
