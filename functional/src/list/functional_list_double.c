@@ -29,7 +29,7 @@ const char *toStringListDouble(ListDouble list) {
     ListDouble head = list;
     char *str = malloc(list->size * 18 + 13);
     strcpy(str, "ListDouble(");
-    while (head != NilDouble) {
+    while (head->headBits != nilBits) {
         char *str2 = malloc(19);
         sprintf(str2, "%.10e, ", head->head);
         strcat(str, str2);

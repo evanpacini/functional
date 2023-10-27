@@ -3,6 +3,7 @@ project(functional LANGUAGES C CXX)
 
 set(CMAKE_C_STANDARD 23)
 set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS 1)
 
 include(CheckLibraryExists)
 
@@ -15,7 +16,7 @@ add_library(
   functional/src/functional_double.c
   functional/src/list/functional_list_double.c functional/src/error.c)
 target_include_directories(functional PUBLIC functional/include)
-target_link_libraries(functional PRIVATE nil)
+target_link_libraries(functional PUBLIC nil)
 check_library_exists(m floor "" LIBM)
 if(LIBM)
   target_link_libraries(functional PRIVATE m)
