@@ -10,7 +10,10 @@ typedef struct ListDoubleStruct ListDoubleStruct;
 typedef ListDoubleStruct *ListDouble;
 
 struct ListDoubleStruct {
-    double head;
+    union {
+        double head;
+        uint64_t headBits;
+    };
     ListDouble tail;
     uint32_t size;
 };

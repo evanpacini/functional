@@ -22,7 +22,7 @@ int main() {
     float x = $f(someFloat(.5f)).pow(someFloat(.5f)).round().toInt().add(someInt(1)).toFloat() $_;
     printf("x: %f\n", x);
 
-    printf("NilDouble: %f 0x%016lx\n", NilDouble->head, *((uint64_t *) &NilDouble->head));
+    printf("NilDouble: %f 0x%016llx\n", NilDouble->head, *((uint64_t *) &NilDouble->head));
 
     ListDouble list = ListDouble(1.123456789e-5, 2., 3., 4.);
     printf("list: %s\n", toStringListDouble(list));
