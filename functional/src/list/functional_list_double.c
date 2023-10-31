@@ -19,7 +19,7 @@ ListDouble ListDoubleX(double head, ...) {
 }
 
 NextListDouble startPipeListDouble(ListDouble a) {
-    pipeListDouble = a;
+    pipeListDouble = helper_makeDeepCopyListDouble(a);
     nextListDouble;
 }
 

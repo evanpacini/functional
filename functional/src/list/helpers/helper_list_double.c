@@ -14,6 +14,16 @@ uint32_t helper_ListDoubleX(va_list args, ListDouble aboveList) {
     return size;
 }
 
+ListDouble helper_makeDeepCopyListDouble(ListDouble ld) {
+    if (ld->tail->headBits == nilBits) return NilDouble;
+    ListDouble newList = (ListDouble) malloc(sizeof(ListDouble));
+    if (newList == NULL) exit(LIST_DOUBLE_MALLOC_ERROR);
+    newList->head = ld->head;
+    newList->tail = helper_makeDeepCopyListDouble(ld->tail);
+    newList->size = ld->size;
+    return newList;
+}
+
 ListDouble helper_lastReference(ListDouble ld) {
     return ld->tail->headBits == nilBits ? ld : helper_lastReference(ld->tail);
 }
