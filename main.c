@@ -35,6 +35,7 @@ int main() {
     printf("list2 with 3 inserted: %s\n", toStringListDouble($ld(list2).insert(3.) $));
     printf("list2 after insertion in the pipe: %s\n", toStringListDouble(list2));
     printf("list and list2: %s\n", toStringListDouble($ld(list).concat(list2) $));
+    printf("list after concat: %s", toStringListDouble(list));
     printf("NilDouble: %s\n", toStringListDouble(NilDouble));
     return 0;
 }

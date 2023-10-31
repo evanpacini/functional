@@ -23,3 +23,13 @@ void helper_updateSize(ListDouble ld, uint32_t addedSize) {
     if (ld->size > addedSize + 1)
         helper_updateSize(ld->tail, addedSize);
 }
+
+ListDouble helper_mapListDoubleDouble(ListDouble ld, double (*f)(double)) {
+    if (ld->tail->headBits == nilBits) return NilDouble;
+    ListDouble newList = (ListDouble) malloc(sizeof(ListDouble));
+    if (newList == NULL) exit(LIST_DOUBLE_MALLOC_ERROR);
+    newList->head = f(ld->head);
+    newList->tail = helper_mapListDoubleDouble(ld->tail, f);
+    newList->size = ld->size;
+    return newList;
+}
