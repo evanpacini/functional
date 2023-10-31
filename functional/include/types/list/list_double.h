@@ -37,6 +37,7 @@ typedef struct NextListDouble {
     NextDouble (*get)(uint32_t);
     NextListDouble (*insert)(double);
     NextListDouble (*concat)(ListDouble);
+    NextListDouble (*mapToDouble)(double (*)(double));
 } NextListDouble;
 
 extern ListDouble pipeListDouble;

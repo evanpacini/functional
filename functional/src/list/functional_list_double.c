@@ -10,10 +10,7 @@ ListDouble pipeListDouble;
 ListDouble ListDoubleX(double head, ...) {
     va_list args;
     va_start(args, head);
-    ListDouble list = (ListDouble) malloc(sizeof(ListDouble));
-    if (list == NULL) exit(LIST_DOUBLE_MALLOC_ERROR);
-    list->head = head;
-    list->tail = NilDouble;
+    ListDouble list = helper_newListDouble(head, NilDouble);
     list->size = 1 + helper_ListDoubleX(args, list);
     return list;
 }
@@ -59,16 +56,17 @@ NextDouble getValueListDouble(uint32_t i) {
 }
 
 NextListDouble insertListDouble(double head) {
-    ListDouble newList = malloc(sizeof(ListDouble));
-    if (newList == NULL) exit(LIST_DOUBLE_MALLOC_ERROR);
-    newList->head = head;
-    newList->tail = pipeListDouble;
-    pipeListDouble = newList;
+    pipeListDouble = helper_newListDouble(head, pipeListDouble);
     nextListDouble;
 }
 
 NextListDouble concatListDouble(ListDouble a) {
     helper_lastReference(pipeListDouble)->tail = a;
     helper_updateSize(pipeListDouble, a->size);
+    nextListDouble;
+}
+
+NextListDouble mapToDoubleListDouble(double (*f)(double)) {
+    pipeListDouble = helper_mapToDoubleListDouble(pipeListDouble, f);
     nextListDouble;
 }

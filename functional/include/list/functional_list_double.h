@@ -56,11 +56,19 @@ extern NextListDouble insertListDouble(double head);
  */
 extern NextListDouble concatListDouble(ListDouble a);
 
+/**
+ * 
+ * @param f
+ * @return
+ */
+extern NextListDouble mapToDoubleListDouble(double (*f)(double));
+
 const NextListDouble FunctionsThatCanUseThePipeListDouble = {
     .endPipe = &endPipeListDouble,
     .get = &getValueListDouble,
     .insert = &insertListDouble,
     .concat = &concatListDouble,
+    .mapToDouble = &mapToDoubleListDouble,
 };
 
 #endif//LIST_DOUBLE_FUNC_H_

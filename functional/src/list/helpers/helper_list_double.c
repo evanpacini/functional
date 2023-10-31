@@ -1,13 +1,19 @@
 #include <stdarg.h>
 #include <types/list/list_double.h>
 
+ListDouble helper_newListDouble(double head, ListDouble tail) {
+    ListDouble list = (ListDouble) malloc(sizeof(ListDouble));
+    if (list == NULL) exit(LIST_DOUBLE_MALLOC_ERROR);
+    list->head = head;
+    list->tail = tail;
+    list->size = tail->size + 1;
+    return list;
+}
+
 uint32_t helper_ListDoubleX(va_list args, ListDouble aboveList) {
     double arg = va_arg(args, double);
     if (*((uint64_t *) &arg) == nilBits) return 0;
-    ListDouble newList = (ListDouble) malloc(sizeof(ListDouble));
-    if (newList == NULL) exit(LIST_DOUBLE_MALLOC_ERROR);
-    newList->head = arg;
-    newList->tail = NilDouble;
+    ListDouble newList = helper_newListDouble(arg, NilDouble);
     aboveList->tail = newList;
     uint32_t size = 1 + helper_ListDoubleX(args, newList);
     newList->size = size;
@@ -15,13 +21,8 @@ uint32_t helper_ListDoubleX(va_list args, ListDouble aboveList) {
 }
 
 ListDouble helper_makeDeepCopyListDouble(ListDouble ld) {
-    if (ld->tail->headBits == nilBits) return NilDouble;
-    ListDouble newList = (ListDouble) malloc(sizeof(ListDouble));
-    if (newList == NULL) exit(LIST_DOUBLE_MALLOC_ERROR);
-    newList->head = ld->head;
-    newList->tail = helper_makeDeepCopyListDouble(ld->tail);
-    newList->size = ld->size;
-    return newList;
+    if (ld->headBits == nilBits) return NilDouble;
+    return helper_newListDouble(ld->head, helper_makeDeepCopyListDouble(ld->tail));
 }
 
 ListDouble helper_lastReference(ListDouble ld) {
@@ -34,12 +35,7 @@ void helper_updateSize(ListDouble ld, uint32_t addedSize) {
         helper_updateSize(ld->tail, addedSize);
 }
 
-ListDouble helper_mapListDoubleDouble(ListDouble ld, double (*f)(double)) {
-    if (ld->tail->headBits == nilBits) return NilDouble;
-    ListDouble newList = (ListDouble) malloc(sizeof(ListDouble));
-    if (newList == NULL) exit(LIST_DOUBLE_MALLOC_ERROR);
-    newList->head = f(ld->head);
-    newList->tail = helper_mapListDoubleDouble(ld->tail, f);
-    newList->size = ld->size;
-    return newList;
+ListDouble helper_mapToDoubleListDouble(ListDouble ld, double (*f)(double)) {
+    if (ld->headBits == nilBits) return NilDouble;
+    return helper_newListDouble(f(ld->head), helper_mapToDoubleListDouble(ld->tail, f));
 }

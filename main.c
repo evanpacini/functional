@@ -1,6 +1,10 @@
 #include <functional.h>
 #include <stdio.h>
 
+double square(double a) {
+    return a * a;
+}
+
 int main() {
     OptionalInt test = $i(someInt(4)).add(someInt(2)).mul(someInt(5)).xor (someInt(3)) $;
     printf("val: %d\n", $i(test) $_);
@@ -27,7 +31,7 @@ int main() {
     ListDouble list = ListDouble(1.123456789e-5, 2., 3., 4.);
     printf("list: %s\n", toStringListDouble(list));
     printf("\nlist->head: %f\nlist->tail: %s\n", list->head, toStringListDouble(list->tail));
-    printf("list(2): %f\n", $ld(list).get(3) $_);
+    printf("list(3): %f\n", $ld(list).get(3) $_);
     printf("list size: %d\n", list->size);
 
     ListDouble list2 = ListDouble(1.);
@@ -35,7 +39,8 @@ int main() {
     printf("list2 with 3 inserted: %s\n", toStringListDouble($ld(list2).insert(3.) $));
     printf("list2 after insertion in the pipe: %s\n", toStringListDouble(list2));
     printf("list and list2: %s\n", toStringListDouble($ld(list).concat(list2) $));
-    printf("list after concat: %s", toStringListDouble(list));
+    printf("list after concat: %s\n", toStringListDouble(list));
+    printf("list mapped to square: %s\n", toStringListDouble($ld(list).mapToDouble(square) $));
     printf("NilDouble: %s\n", toStringListDouble(NilDouble));
     return 0;
 }
