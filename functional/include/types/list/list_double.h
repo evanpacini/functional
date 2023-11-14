@@ -24,7 +24,7 @@ extern "C"
 #else
 extern
 #endif//__cplusplus
-    ListDouble NilDouble;
+    ListDouble NilDoubleX;
 
 typedef struct NextDouble NextDouble;
 

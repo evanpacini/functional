@@ -10,6 +10,11 @@ ListDouble helper_newListDouble(double head, ListDouble tail) {
     return list;
 }
 
+ListDouble helper_makeDeepCopyListDouble(ListDouble ld) {
+    if (ld->headBits == nilBits) return NilDouble;
+    return helper_newListDouble(ld->head, helper_makeDeepCopyListDouble(ld->tail));
+}
+
 uint32_t helper_ListDoubleX(va_list args, ListDouble aboveList) {
     double arg = va_arg(args, double);
     if (*((uint64_t *) &arg) == nilBits) return 0;
@@ -18,11 +23,6 @@ uint32_t helper_ListDoubleX(va_list args, ListDouble aboveList) {
     uint32_t size = 1 + helper_ListDoubleX(args, newList);
     newList->size = size;
     return size;
-}
-
-ListDouble helper_makeDeepCopyListDouble(ListDouble ld) {
-    if (ld->headBits == nilBits) return NilDouble;
-    return helper_newListDouble(ld->head, helper_makeDeepCopyListDouble(ld->tail));
 }
 
 ListDouble helper_lastReference(ListDouble ld) {

@@ -5,8 +5,18 @@
 #include <types/double.h>
 #include <types/list/list_double.h>
 
-#define ListDouble(...) ListDoubleX(__VA_ARGS__, NilDouble->head)
+#define NilDouble newNilDouble()
+#define ListDouble(...) ListDoubleX(__VA_ARGS__, NilDoubleX->head)
 #define $ld(x) startPipeListDouble(x)
+
+/**
+ *
+ * @param head
+ * @param tail
+ * @return
+ */
+extern ListDouble newNilDouble();
+
 /**
  *
  * @param head

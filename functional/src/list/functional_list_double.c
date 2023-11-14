@@ -7,6 +7,15 @@
 
 ListDouble pipeListDouble;
 
+ListDouble newNilDouble() {
+    ListDouble list = (ListDouble) malloc(sizeof(ListDouble));
+    if (list == NULL) exit(LIST_DOUBLE_MALLOC_ERROR);
+    list->head = NilDoubleX->head;
+    list->tail = NilDoubleX->tail;
+    list->size = 0;
+    return list;
+}
+
 ListDouble ListDoubleX(double head, ...) {
     va_list args;
     va_start(args, head);
@@ -26,11 +35,11 @@ ListDouble endPipeListDouble() {
 
 const char *toStringListDouble(ListDouble list) {
     ListDouble head = list;
-    char *str = malloc(list->size * 18 + 13);
+    char *str = malloc(list->size * 18 + 13 + 100);
     if (str == NULL) exit(LIST_DOUBLE_MALLOC_ERROR);
     strcpy(str, "ListDouble(");
     while (head->headBits != nilBits) {
-        char *str2 = malloc(19);
+        char *str2 = malloc(19 + 100);
         if (str2 == NULL) exit(LIST_DOUBLE_MALLOC_ERROR);
         sprintf(str2, "%.10e, ", head->head);
         strcat(str, str2);
@@ -41,18 +50,21 @@ const char *toStringListDouble(ListDouble list) {
     return str;
 }
 
+ListDouble helper_getValueListDouble(uint32_t i, ListDouble ld) {
+    if (i >= ld->size) return NilDouble;
+    if (i == 0) return ld;
+    return helper_getValueListDouble(--i, ld->tail);
+}
+
 NextDouble getValueListDouble(uint32_t i) {
-    if (i >= pipeListDouble->size) {
+    ListDouble ld = helper_getValueListDouble(i, pipeListDouble);
+    if (ld->headBits == nilBits) {
         pipeDouble.isPresent = false;
         nextDouble;
     }
-    if (i == 0) {
-        pipeDouble.value = pipeListDouble->head;
-        pipeDouble.isPresent = true;
-        nextDouble;
-    }
-    pipeListDouble = pipeListDouble->tail;
-    return getValueListDouble(--i);
+    pipeDouble.value = ld->head;
+    pipeDouble.isPresent = true;
+    nextDouble;
 }
 
 NextListDouble insertListDouble(double head) {
