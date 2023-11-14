@@ -50,7 +50,6 @@ void testGetListDouble() {
 
 void testToStringListDouble() {
     const ListDouble ld = ListDouble(1., 2., 3., 4.);
-    //printf("number of characters: %llu, list->size * 18 + 13 = %d\n", strlen(toStringListDouble(ld)), ld->size * 18 + 13);
     assertStringEqual(toStringListDouble(ld), "ListDouble(1.0000000000e+00, 2.0000000000e+00, 3.0000000000e+00, 4.0000000000e+00, )", "testToStringListDouble: toStringListDouble(ld) == \"ListDouble(1.0000000000e+00, 2.0000000000e+00, 3.0000000000e+00, 4.0000000000e+00, )\".");
 }
 
@@ -68,7 +67,6 @@ void runTests() {
 
 int main() {
     runTests();
-    exit(0);
     OptionalInt test = $i(someInt(4)).add(someInt(2)).mul(someInt(5)).xor (someInt(3)) $;
     printf("val: %d\n", $i(test) $_);
 

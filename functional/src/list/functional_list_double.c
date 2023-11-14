@@ -35,11 +35,11 @@ ListDouble endPipeListDouble() {
 
 const char *toStringListDouble(ListDouble list) {
     ListDouble head = list;
-    char *str = malloc(list->size * 18 + 13 + 100);
+    char *str = malloc(list->size * 18 + 13);
     if (str == NULL) exit(LIST_DOUBLE_MALLOC_ERROR);
     strcpy(str, "ListDouble(");
     while (head->headBits != nilBits) {
-        char *str2 = malloc(19 + 100);
+        char *str2 = malloc(19);
         if (str2 == NULL) exit(LIST_DOUBLE_MALLOC_ERROR);
         sprintf(str2, "%.10e, ", head->head);
         strcat(str, str2);
