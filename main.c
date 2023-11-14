@@ -23,29 +23,52 @@ void assertStringEqual(const char* a, const char* b, const char *message) {
     }
 }
 
+void assertDoubleEqual(const double a, const double b, const char *message) {
+    if (a != b) {
+        printf("Assertion failed: %s\n", message);
+        printf("Expected: %f\n", a);
+        printf("Actual: %f\n", b);
+        exit(1);
+    }
+}
+
+bool helper_assertListDoubleEqual(const ListDouble a, const ListDouble b) {
+    if (a->headBits != b->headBits) return false;
+    if (a->headBits == nilBits) return true;
+    return helper_assertListDoubleEqual(a->tail, b->tail);
+}
+
+void assertListDoubleEqual(const ListDouble a, const ListDouble b, const char *message) {
+    if(!helper_assertListDoubleEqual(a, b)) {
+        printf("Assertion failed: %s\n", message);
+        printf("Expected: %s\n", toStringListDouble(a));
+        printf("Actual: %s\n", toStringListDouble(b));
+    }
+}
+
 void testInitializeListDouble() {
     const ListDouble ld = ListDouble(1., 2., 3., 4.);
-    assert(ld->head == 1., "testInitializeListDouble: head == 1.");
-    assert(ld->tail->head == 2., "testInitializeListDouble: tail->head == 2.");
-    assert(ld->tail->tail->head == 3., "testInitializeListDouble: tail->tail->head == 3.");
-    assert(ld->tail->tail->tail->head == 4., "testInitializeListDouble: tail->tail->tail->head == 4.");
+    assert(ld->head == 1., "head == 1.");
+    assert(ld->tail->head == 2., "tail->head == 2.");
+    assert(ld->tail->tail->head == 3., "tail->tail->head == 3.");
+    assert(ld->tail->tail->tail->head == 4., "tail->tail->tail->head == 4.");
 
-    assert(ld->size == 4, "testInitializeListDouble: size == 4.");
-    assert(ld->tail->size = 3, "testInitializeListDouble: tail->size == 3.");
-    assert(ld->tail->tail->size = 2, "testInitializeListDouble: tail->tail->size == 2.");
-    assert(ld->tail->tail->tail->size = 1, "testInitializeListDouble: tail->tail->tail->size == 1.");
+    assert(ld->size == 4, "size == 4.");
+    assert(ld->tail->size = 3, "tail->size == 3.");
+    assert(ld->tail->tail->size = 2, "tail->tail->size == 2.");
+    assert(ld->tail->tail->tail->size = 1, "tail->tail->tail->size == 1.");
 
-    assert(ld->tail->tail->tail->tail->headBits == nilBits, "testInitializeListDouble: tail->tail->tail->tail->headBits == nilBits.");
-    assert(ld->tail->tail->tail->tail->tail == NULL, "testInitializeListDouble: tail->tail->tail->tail->tail == NULL.");
-    assert(ld->tail->tail->tail->tail->size == 0, "testInitializeListDouble: tail->tail->tail->tail->size == 0.");
+    assert(ld->tail->tail->tail->tail->headBits == nilBits, "tail->tail->tail->tail->headBits == nilBits.");
+    assert(ld->tail->tail->tail->tail->tail == NULL, "tail->tail->tail->tail->tail == NULL.");
+    assert(ld->tail->tail->tail->tail->size == 0, "tail->tail->tail->tail->size == 0.");
 }
 
 void testGetListDouble() {
     const ListDouble ld = ListDouble(1., 2., 3., 4.);
     assert($ld(ld).get(0) $_ == 1., "get(0) == 1.");
-    assert($ld(ld).get(1) $_ == 2., "testGetListDouble: get(1) == 2.");
-    assert($ld(ld).get(2) $_ == 3., "testGetListDouble: get(2) == 3.");
-    assert($ld(ld).get(3) $_ == 4., "testGetListDouble: get(3) == 4.");
+    assert($ld(ld).get(1) $_ == 2., "get(1) == 2.");
+    assert($ld(ld).get(2) $_ == 3., "get(2) == 3.");
+    assert($ld(ld).get(3) $_ == 4., "get(3) == 4.");
 }
 
 void testToStringListDouble() {
@@ -53,16 +76,51 @@ void testToStringListDouble() {
     assertStringEqual(toStringListDouble(ld), "ListDouble(1.0000000000e+00, 2.0000000000e+00, 3.0000000000e+00, 4.0000000000e+00, )", "testToStringListDouble: toStringListDouble(ld) == \"ListDouble(1.0000000000e+00, 2.0000000000e+00, 3.0000000000e+00, 4.0000000000e+00, )\".");
 }
 
+void testInsertListDouble() {
+    const ListDouble ld = ListDouble(1., 2., 3., 4.);
+    const ListDouble ld2 = $ld(ld).insert(5.) $;
+    assertDoubleEqual(ld2->head, 5., "5 should be inserted to [1, 2, 3, 4]");
+    assertListDoubleEqual(ld2->tail, ld, "The original list should not change.");
+}
+
+void testConcatListDouble() {
+    const ListDouble ld = ListDouble(1., 2., 3., 4.);
+    const ListDouble ld2 = ListDouble(5., 6., 7., 8.);
+    const ListDouble ld3 = $ld(ld).concat(ld2) $;
+    const ListDouble ld4 = ListDouble(1., 2., 3., 4., 5., 6., 7., 8.);
+    assertListDoubleEqual(ld3, ld4, "The concatenation should work.");
+    assertListDoubleEqual(ld, ListDouble(1., 2., 3., 4.), "The original list should not change.");
+    assertListDoubleEqual(ld2, ListDouble(5., 6., 7., 8.), "The concatenated list should not change.");
+}
+
+void testMapToDoubleListDouble() {
+    const ListDouble ld = ListDouble(1., 2., 3., 4.);
+    const ListDouble ld2 = $ld(ld).mapToDouble(square) $;
+    const ListDouble ld3 = ListDouble(1., 4., 9., 16.);
+    assertListDoubleEqual(ld2, ld3, "[1, 2, 3, 4] should be mapped to [1, 4, 9, 16].");
+    assertListDoubleEqual(ld, ListDouble(1., 2., 3., 4.), "The original list should not change.");
+
+}
+
 void runTests() {
-    printf("\nTesting testInitializeListDouble...");
+    printf("Testing testInitializeListDouble...");
     testInitializeListDouble();
-    printf("\rTesting testInitializeListDouble DONE");
-    printf("\nTesting testGetListDouble...");
+    printf("\rTesting testInitializeListDouble DONE\n");
+    printf("Testing testGetListDouble...");
     testGetListDouble();
-    printf("\rTesting testGetListDouble DONE");
-    printf("\nTesting testToStringListDouble...");
+    printf("\rTesting testGetListDouble DONE\n");
+    printf("Testing testToStringListDouble...");
     testToStringListDouble();
-    printf("\rTesting testToStringListDouble DONE");
+    printf("\rTesting testToStringListDouble DONE\n");
+    printf("Testing testInsertListDouble...");
+    testInsertListDouble();
+    printf("\rTesting testInsertListDouble DONE\n");
+    printf("Testing testConcatListDouble...");
+    testConcatListDouble();
+    printf("\rTesting testConcatListDouble DONE\n");
+    printf("Testing testMapToDoubleListDouble...");
+    testMapToDoubleListDouble();
+    printf("\rTesting testMapToDoubleListDouble DONE\n");
 }
 
 int main() {
