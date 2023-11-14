@@ -5,8 +5,18 @@
 #include <types/double.h>
 #include <types/list/list_double.h>
 
-#define ListDouble(...) ListDoubleX(__VA_ARGS__, NilDouble->head)
+#define NilDouble newNilDouble()
+#define ListDouble(...) ListDoubleX(__VA_ARGS__, NilDoubleX->head)
 #define $ld(x) startPipeListDouble(x)
+
+/**
+ *
+ * @param head
+ * @param tail
+ * @return
+ */
+extern ListDouble newNilDouble();
+
 /**
  *
  * @param head
@@ -56,11 +66,19 @@ extern NextListDouble insertListDouble(double head);
  */
 extern NextListDouble concatListDouble(ListDouble a);
 
+/**
+ *
+ * @param f
+ * @return
+ */
+extern NextListDouble mapToDoubleListDouble(double (*f)(double));
+
 const NextListDouble FunctionsThatCanUseThePipeListDouble = {
     .endPipe = &endPipeListDouble,
     .get = &getValueListDouble,
     .insert = &insertListDouble,
     .concat = &concatListDouble,
+    .mapToDouble = &mapToDoubleListDouble,
 };
 
 #endif//LIST_DOUBLE_FUNC_H_
