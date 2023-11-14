@@ -1,6 +1,6 @@
 #include <functional.h>
-#include <stdio.h>
 #include <math.h>
+#include <stdio.h>
 #include <string.h>
 
 double square(double a) {
@@ -14,7 +14,7 @@ void assert(bool condition, const char *message) {
     }
 }
 
-void assertStringEqual(const char* a, const char* b, const char *message) {
+void assertStringEqual(const char *a, const char *b, const char *message) {
     if (strcmp(a, b) != 0) {
         printf("Assertion failed: %s\n", message);
         printf("Expected: %s\n", a);
@@ -39,7 +39,7 @@ bool helper_assertListDoubleEqual(const ListDouble a, const ListDouble b) {
 }
 
 void assertListDoubleEqual(const ListDouble a, const ListDouble b, const char *message) {
-    if(!helper_assertListDoubleEqual(a, b)) {
+    if (!helper_assertListDoubleEqual(a, b)) {
         printf("Assertion failed: %s\n", message);
         printf("Expected: %s\n", toStringListDouble(a));
         printf("Actual: %s\n", toStringListDouble(b));
@@ -99,7 +99,6 @@ void testMapToDoubleListDouble() {
     const ListDouble ld3 = ListDouble(1., 4., 9., 16.);
     assertListDoubleEqual(ld2, ld3, "[1, 2, 3, 4] should be mapped to [1, 4, 9, 16].");
     assertListDoubleEqual(ld, ListDouble(1., 2., 3., 4.), "The original list should not change.");
-
 }
 
 void runTests() {
