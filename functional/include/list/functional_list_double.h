@@ -67,7 +67,7 @@ extern NextListDouble insertListDouble(double head);
 extern NextListDouble concatListDouble(ListDouble a);
 
 /**
- * 
+ *
  * @param f
  * @return
  */
