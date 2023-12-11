@@ -1,7 +1,10 @@
 #include "error.h"
+#include <math.h>
 #include <object.h>
 #include <stdbool.h>
+#include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 Object pipeObject;
 
@@ -125,6 +128,26 @@ NextObject toInt() {
     nextObject;
 }
 
+bool chrii(char c) {
+    return c >= '0' && c <= '9';
+}
+
+bool strii(char* str) {
+    char *endptr;
+    strtoll(str, &endptr, 10);
+
+    // Check if the conversion was successful
+    return (*endptr == '\0' || *endptr == '\n');
+}
+
+bool strif(char* str) {
+    char *endptr;
+    strtod(str, &endptr);
+
+    // Check if the conversion was successful
+    return (*endptr == '\0' || *endptr == '\n');
+}
+
 NextObject add(Object a) {
     switch (pipeObject.class) {
         case INT: {
@@ -148,12 +171,14 @@ NextObject add(Object a) {
                     break;
                 }
                 case CHAR: {
-                    int temp = *(int *) pipeObject.value + *(char *) a.value;
-                    pipeObject.value = &temp;
+                    if (!chrii(*(char *) a.value)) exit(NAN_VALUE);
+                    int temp1 = *(int *) pipeObject.value;
+                    int temp2 = (*(char *) a.value - '0');
+                    int sum = temp1 + temp2;
+                    pipeObject.value = &sum;
                     pipeObject.class = INT;
                     break;
                 }
-                    exit(NAN_CLASS);
                 default:
                     exit(NAN_CLASS);
             }
@@ -180,13 +205,20 @@ NextObject add(Object a) {
                     break;
                 }
                 case CHAR: {
-                    float temp = *(float *) pipeObject.value + *(char *) a.value;
+                    float temp = *(float *) pipeObject.value + (*(char *) a.value - '0');
                     pipeObject.value = &temp;
                     pipeObject.class = FLOAT;
                     break;
                 }
-                case STRING:
-                    exit(NAN_CLASS);
+                case STRING: {
+                    if (!strif(*(char **) a.value)) exit(NAN_VALUE);
+                    float temp1 = *(float *) pipeObject.value;
+                    float temp2 = strtod(*(char **) a.value, NULL);
+                    float sum = temp1 + temp2;
+                    pipeObject.value = &sum;
+                    pipeObject.class = FLOAT;
+                    break;
+                }
                 default:
                     exit(NAN_CLASS);
             }
@@ -213,13 +245,20 @@ NextObject add(Object a) {
                     break;
                 }
                 case CHAR: {
-                    double temp = *(double *) pipeObject.value + *(char*) a.value;
+                    double temp = *(double *) pipeObject.value + (*(char *) a.value - '0');
                     pipeObject.value = &temp;
                     pipeObject.class = DOUBLE;
                     break;
                 }
-                case STRING:
-                    exit(NAN_CLASS);
+                case STRING:{
+                    if (!strif(*(char **) a.value)) exit(NAN_VALUE);
+                    double temp1 = *(double *) pipeObject.value;
+                    double temp2 = strtod(*(char **) a.value, NULL);
+                    double sum = temp1 + temp2;
+                    pipeObject.value = &sum;
+                    pipeObject.class = DOUBLE;
+                    break;
+                }
                 default:
                     exit(NAN_CLASS);
             }
@@ -228,43 +267,72 @@ NextObject add(Object a) {
         case CHAR: {
             switch (a.class) {
                 case INT: {
-                    int temp = *(char *) pipeObject.value + *(int *) a.value;
+                    if (!chrii(*(char *) pipeObject.value)) exit(NAN_VALUE);
+                    int temp = (*(char *) pipeObject.value - '0') + *(int *) a.value;
                     pipeObject.value = &temp;
                     pipeObject.class = INT;
                     break;
                 }
                 case FLOAT: {
-                    float temp = *(char *) pipeObject.value + *(float *) a.value;
+                    if (!chrii(*(char *) pipeObject.value)) exit(NAN_VALUE);
+                    float temp = (*(char *) pipeObject.value - '0') + *(float *) a.value;
                     pipeObject.value = &temp;
                     pipeObject.class = FLOAT;
                     break;
                 }
                 case DOUBLE: {
-                    double temp = *(char *) pipeObject.value + *(double *) a.value;
+                    if (!chrii(*(char *) pipeObject.value)) exit(NAN_VALUE);
+                    double temp = (*(char *) pipeObject.value - '0') + *(double *) a.value;
                     pipeObject.value = &temp;
                     pipeObject.class = DOUBLE;
                     break;
                 }
                 case CHAR: {
-                    uint8_t temp1 = *(char *) pipeObject.value - (uint8_t)'0';
-                    uint8_t temp2 = *(char *) a.value - (uint8_t)'0';
-                    if (temp1 < 0 || temp1 > 9 || temp2 < 0 || temp2 > 9) exit(NAN_VALUE);
+                    if (!chrii(*(char *) pipeObject.value)
+                        || !chrii(*(char *) a.value)) exit(NAN_VALUE);
+                    uint8_t temp1 = *(char *) pipeObject.value - (uint8_t) '0';
+                    uint8_t temp2 = *(char *) a.value - (uint8_t) '0';
                     uint8_t sum = temp1 + temp2;
                     if (sum > 9) {
                         char *temp3 = (char *) calloc(3, sizeof(char));
-                        temp3[0] = sum / 10;
-                        temp3[1] = sum % 10;
-                        pipeObject.value = temp3;
+                        temp3[0] = sum / 10 + '0';
+                        temp3[1] = sum % 10 + '0';
+                        pipeObject.value = &temp3;
                         pipeObject.class = STRING;
                     } else {
-                        char temp3 = (char) (sum + (uint8_t)'0');
+                        char temp3 = (char) (sum + (uint8_t) '0');
                         pipeObject.value = &temp3;
                         pipeObject.class = CHAR;
                     }
+                } break;
+                case STRING: {
+                    if (!chrii(*(char *) pipeObject.value)) exit(NAN_VALUE);
+                    if (strii(*(char **) a.value)) {
+                        long long temp1 = *(char *) pipeObject.value - (uint8_t) '0';
+                        long long temp2 = strtoll(*(char **) a.value, NULL, 10);
+                        long long sum = temp1 + temp2;
+                        if (sum > 9) {
+                            char *temp3 = (char *) calloc(3, sizeof(char));
+                            temp3[0] = sum / 10 + '0';
+                            temp3[1] = sum % 10 + '0';
+                            pipeObject.value = &temp3;
+                            pipeObject.class = STRING;
+                        } else {
+                            char *temp3 = (char *) calloc(2, sizeof(char));
+                            temp3[1] = sum + '0';
+                            pipeObject.value = &temp3;
+                            pipeObject.class = STRING;
+                        }
+                    } else if (strif(*(char **) a.value)){
+                        double temp1 = *(char *) pipeObject.value - (uint8_t) '0';
+                        double temp2 = strtod(*(char **) a.value, NULL);
+                        double sum = temp1 + temp2;
+                        char *temp3 = (char *) calloc(20, sizeof(char));
+                        sprintf(temp3, "%f", sum);
+                        pipeObject.value = &temp3;
+                        pipeObject.class = STRING;
+                    } else exit(NAN_VALUE);
                 }
-                    break;
-                case STRING:
-                    exit(NAN_CLASS);
                 default:
                     exit(NAN_CLASS);
             }
@@ -273,48 +341,123 @@ NextObject add(Object a) {
         case STRING: {
             switch (a.class) {
                 case INT: {
-                    int temp = *(char *) pipeObject.value + *(int *) a.value;
-                    pipeObject.value = &temp;
-                    pipeObject.class = INT;
+                    if (strii(*(char **) pipeObject.value)) {
+                        long long temp1 = strtoll(*(char **) pipeObject.value, NULL, 10);
+                        long long temp2 = *(int *) a.value;
+                        long long sum = temp1 + temp2;
+                        char *temp3 = (char *) calloc(20, sizeof(char));
+                        sprintf(temp3, "%lld", sum);
+                        pipeObject.value = &temp3;
+                        pipeObject.class = STRING;
+                    } else if (strif(*(char **) pipeObject.value)){
+                        double temp1 = strtod(*(char **) pipeObject.value, NULL);
+                        double temp2 = *(int *) a.value;
+                        double sum = temp1 + temp2;
+                        char *temp3 = (char *) calloc(20, sizeof(char));
+                        sprintf(temp3, "%f", sum);
+                        pipeObject.value = &temp3;
+                        pipeObject.class = STRING;
+                    } else exit(NAN_VALUE);
                     break;
                 }
                 case FLOAT: {
-                    float temp = *(char *) pipeObject.value + *(float *) a.value;
-                    pipeObject.value = &temp;
-                    pipeObject.class = FLOAT;
+                    if (strii(*(char **) pipeObject.value)) {
+                        long long temp1 = strtoll((char *) pipeObject.value, NULL, 10);
+                        double temp2 = *(float *) a.value;
+                        double sum = temp1 + temp2;
+                        char *temp3 = (char *) calloc(20, sizeof(char));
+                        sprintf(temp3, "%f", sum);
+                        pipeObject.value = &temp3;
+                        pipeObject.class = STRING;
+                    } else if (strif(*(char **) pipeObject.value)){
+                        double temp1 = strtod(*(char **) pipeObject.value, NULL);
+                        double temp2 = *(float *) a.value;
+                        double sum = temp1 + temp2;
+                        char *temp3 = (char *) calloc(20, sizeof(char));
+                        sprintf(temp3, "%f", sum);
+                        pipeObject.value = &temp3;
+                        pipeObject.class = STRING;
+                    } else exit(NAN_VALUE);
                     break;
                 }
                 case DOUBLE: {
-                    double temp = *(char *) pipeObject.value + *(double *) a.value;
-                    pipeObject.value = &temp;
-                    pipeObject.class = DOUBLE;
+                    if (strii(*(char **) pipeObject.value)) {
+                        long long temp1 = strtoll(*(char **) pipeObject.value, NULL, 10);
+                        double temp2 = *(double *) a.value;
+                        double sum = temp1 + temp2;
+                        char *temp3 = (char *) calloc(20, sizeof(char));
+                        sprintf(temp3, "%f", sum);
+                        pipeObject.value = &temp3;
+                        pipeObject.class = STRING;
+                    } else if (strif(*(char **) pipeObject.value)){
+                        double temp1 = strtod((char *) pipeObject.value, NULL);
+                        double temp2 = *(double *) a.value;
+                        double sum = temp1 + temp2;
+                        char *temp3 = (char *) calloc(20, sizeof(char));
+                        sprintf(temp3, "%f", sum);
+                        pipeObject.value = &temp3;
+                        pipeObject.class = STRING;
+                    } else exit(NAN_VALUE);
                     break;
                 }
                 case CHAR: {
-                    uint8_t temp1 = *(char *) pipeObject.value - (uint8_t)'0';
-                    uint8_t temp2 = *(char *) a.value - (uint8_t)'0';
-                    if (temp1 < 0 || temp1 > 9 || temp2 < 0 || temp2 > 9) exit(NAN_VALUE);
-                    uint8_t sum = temp1 + temp2;
-                    if (sum > 9) {
-                        char *temp3 = (char *) calloc(3, sizeof(char));
-                        temp3[0] = sum / 10;
-                        temp3[1] = sum % 10;
-                        pipeObject.value = temp3;
-                        pipeObject.class = STRING;
-                    } else {
-                        char temp3 = (char) (sum + (uint8_t)'0');
+                    if (!chrii(*(char *) a.value)) exit(NAN_VALUE);
+                    if (strii(*(char **) pipeObject.value)) {
+                        long long temp1 = strtoll(*(char **) pipeObject.value, NULL, 10);
+                        long long temp2 = *(char *) a.value - (uint8_t) '0';
+                        long long sum = temp1 + temp2;
+                        if (sum > 9) {
+                            char *temp3 = (char *) calloc(3, sizeof(char));
+                            temp3[0] = sum / 10 + '0';
+                            temp3[1] = sum % 10 + '0';
+                            pipeObject.value = &temp3;
+                            pipeObject.class = STRING;
+                        } else {
+                            char *temp3 = (char *) calloc(2, sizeof(char));
+                            temp3[1] = sum + '0';
+                            pipeObject.value = &temp3;
+                            pipeObject.class = STRING;
+                        }
+                    } else if (strif(*(char **) pipeObject.value)){
+                        double temp1 = strtod(*(char **) pipeObject.value, NULL);
+                        double temp2 = *(char *) a.value - (uint8_t) '0';
+                        double sum = temp1 + temp2;
+                        char *temp3 = (char *) calloc(20, sizeof(char));
+                        sprintf(temp3, "%f", sum);
                         pipeObject.value = &temp3;
-                        pipeObject.class = CHAR;
-                    }
-                }
+                        pipeObject.class = STRING;
+                    } else exit(NAN_VALUE);
                     break;
+                }
                 case STRING:
-                    exit(NAN_CLASS);
+                    if (strii(*(char **) pipeObject.value) && strii(*(char **) a.value)) {
+                        long long temp1 = strtoll(*(char **) pipeObject.value, NULL, 10);
+                        long long temp2 = strtoll(*(char **) a.value, NULL, 10);
+                        long long sum = temp1 + temp2;
+                        char *temp3 = (char *) calloc(20, sizeof(char));
+                        sprintf(temp3, "%lld", sum);
+                        pipeObject.value = &temp3;
+                        pipeObject.class = STRING;
+                    } else if (strif(*(char **) pipeObject.value) && strif(*(char **) a.value)
+                                   || strii(*(char **) pipeObject.value) && strif(*(char **) a.value)
+                                   || strif(*(char **) pipeObject.value) && strii(*(char **) a.value)) {
+                        double temp1 = strtod(*(char **) pipeObject.value, NULL);
+                        double temp2 = strtod(*(char **) a.value, NULL);
+                        double sum = temp1 + temp2;
+                        char *temp3 = (char *) calloc(20, sizeof(char));
+                        sprintf(temp3, "%f", sum);
+                        pipeObject.value = &temp3;
+                        pipeObject.class = STRING;
+                    } else exit(NAN_VALUE);
+                    break;
                 default:
                     exit(NAN_CLASS);
             }
             break;
         }
+        default:
+            exit(NAN_CLASS);
+    }
     nextObject;
 }
 

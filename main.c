@@ -138,6 +138,24 @@ int main() {
     float* cVal = $o(c).toFloat() $_;
     printf("cVal: %f\n", *cVal);
 
+    int l = 8;
+    Object d = newObject(INT, &l);
+    int* dVal = $o(d).add(c) $_;
+    printf("dVal: %d\n", *dVal);
+
+    const char* str = "1234";
+    Object e = newObject(STRING, &str);
+    const char** eVal = $o(e).toInt() $_;
+    printf("eVal: %s\n", *eVal);
+
+    const char* str2 = "4321";
+    Object f = newObject(STRING, &str2);
+    const char** fVal = $o(f).toInt() $_;
+    printf("fVal: %s\n", *fVal);
+
+    const char** str3 = $o(e).add(f)$_;
+    printf("str3: %s\n", *str3);
+
 
 
 
