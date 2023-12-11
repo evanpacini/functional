@@ -123,6 +123,41 @@ void runTests() {
 }
 
 int main() {
+    int i = 4;
+    Object a = newObject(INT, &i);
+    int* aVal = $o(a) $_;
+    printf("aVal: %d\n", *aVal);
+
+    int j = 5;
+    Object b = newObject(INT, &j);
+    float* bVal = $o(b).toFloat() $_;
+    printf("bVal: %f\n", *bVal);
+
+    char k = '7';
+    Object c = newObject(CHAR, &k);
+    float* cVal = $o(c).toFloat() $_;
+    printf("cVal: %f\n", *cVal);
+
+
+
+
+
+
+
+
+
+    exit(0);
+
+
+
+
+
+
+
+
+
+
+
     runTests();
     OptionalInt test = $i(someInt(4)).add(someInt(2)).mul(someInt(5)).xor (someInt(3)) $;
     printf("val: %d\n", $i(test) $_);
